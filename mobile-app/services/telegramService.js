@@ -103,13 +103,28 @@ async function getEntity(folderId) {
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 
 export async function requestLoginCode(apiId, apiHash, phone) {
-  await gramClient.init(apiId, apiHash);
+  console.log('[TG Auth] requestLoginCode start — phone:', phone);
+  try {
+    console.log('[TG Auth] Calling gramClient.init...');
+    await gramClient.init(apiId, apiHash);
+    console.log('[TG Auth] gramClient.init OK — connected');
+  } catch (e) {
+    console.error('[TG Auth] gramClient.init FAILED:', e.message, e.stack);
+    throw e;
+  }
   const client = gramClient.get();
   gramClient._phone   = phone;
   gramClient._apiId   = apiId;
   gramClient._apiHash = apiHash;
-  const result = await client.sendCode({ apiId: parseInt(apiId, 10), apiHash }, phone);
-  gramClient._phoneCodeHash = result.phoneCodeHash;
+  try {
+    console.log('[TG Auth] Calling client.sendCode...');
+    const result = await client.sendCode({ apiId: parseInt(apiId, 10), apiHash }, phone);
+    console.log('[TG Auth] sendCode OK — phoneCodeHash:', result?.phoneCodeHash ? 'present' : 'MISSING');
+    gramClient._phoneCodeHash = result.phoneCodeHash;
+  } catch (e) {
+    console.error('[TG Auth] sendCode FAILED:', e.message, e.stack);
+    throw e;
+  }
 }
 
 export async function signInWithCode(_apiId, _apiHash, _phone, code) {

@@ -56,7 +56,27 @@ if (typeof global.localStorage === 'undefined') {
 }
 console.log('[Polyfills] localStorage OK');
 
-// ── 6. Web globals ────────────────────────────────────────────────────────────
+// ── 6. Node.js globals needed by GramJS / dependencies ────────────────────────
+// `self` — used by whatwg-fetch and GramJS for global context detection
+if (typeof global.self === 'undefined') {
+  global.self = global;
+}
+
+// `__filename` — used by node-localstorage / write-file-atomic inside GramJS
+if (typeof global.__filename === 'undefined') {
+  global.__filename = '';
+}
+
+// `navigator.userAgent` — GramJS uses this for initConnection device info
+if (typeof global.navigator === 'undefined') {
+  global.navigator = {};
+}
+if (!global.navigator.userAgent) {
+  global.navigator.userAgent = 'TelegramDrive/1.0 (React Native)';
+}
+console.log('[Polyfills] Node globals OK');
+
+// ── 7. Web globals ────────────────────────────────────────────────────────────
 if (Platform.OS === 'web' && typeof window !== 'undefined') {
   window.Buffer  = window.Buffer  || Buffer;
   window.process = window.process || global.process;
@@ -64,3 +84,4 @@ if (Platform.OS === 'web' && typeof window !== 'undefined') {
 }
 
 console.log('[Polyfills] All done!');
+
