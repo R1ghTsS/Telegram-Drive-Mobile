@@ -16,6 +16,8 @@ const POLYFILLS = {
   vm: require.resolve('vm-browserify'),
   buffer: require.resolve('buffer/'),
   process: require.resolve('process/'),
+  events: require.resolve('events/'),
+  util: require.resolve('util/'),
 };
 
 // Modules with no browser equivalent — return an empty module stub
